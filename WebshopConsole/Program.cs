@@ -7,8 +7,11 @@ namespace WebshopConsole
 {
     internal class Program
     {
+        static User LoggedInUser = null;
+
         static void Main(string[] args)
         {
+
             //Startmeny
             Console.WriteLine("====== Välkommen till Jakobs Klädwebshop! ====== ");
         startmeny:
@@ -42,43 +45,57 @@ namespace WebshopConsole
                     Console.WriteLine("Admin inloggad");
                 else
                     Console.WriteLine("Kund inloggad");
+                LoggedInUser = user;
             }
+           
             //Registrering
-
-        registreringstart:
             Console.Clear();
             if (choice == "2")
             {
-                Console.Write("Välj användarnamn: ");
-                var username = Console.ReadLine();
 
-                Console.Write("Välj lösenord: ");
-                var password = Console.ReadLine();
-
-                using var db = new WebshopContext();
-
-                // Kolla om användarnamnet redan finns
-                if (db.Users.Any(u => u.Username == username))
+                while (true)
                 {
-                    Console.WriteLine("Användarnamnet finns redan. \n" +
-                                      "Vänligen välj ett annat!");
-                    Console.Read();
-                    goto registreringstart;
+                    Console.Write("Användarnamn: ");
+                    string username = Console.ReadLine();
+
+                    Console.Write("Lösenord: ");
+                    string password = Console.ReadLine();
+                    using var db = new WebshopContext();
+                    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                    {
+                        Console.WriteLine("Användarnamn och lösenord får inte vara tomma.");
+                        continue;
+                    }
+
+                    if (db.Users.Any(u => u.Username == username))
+                    {
+                        Console.WriteLine("Användarnamnet finns redan. Försök igen.");
+                        continue; 
+                    }
+
+                    db.Users.Add(new User
+                    {
+                        Username = username,
+                        Password = password,
+                        IsAdmin = false
+                    });
+
+                    db.SaveChanges();
+                    Console.WriteLine("Registrering lyckades!");
+                    break; 
                 }
-
-                db.Users.Add(new User
-                {
-                    Username = username,
-                    Password = password,
-                    IsAdmin = false
-                });
-
-                db.SaveChanges();
-
-                Console.WriteLine("Registrering klar! Du kan nu logga in.");
-                goto startmeny;
             }
 
+            void ShowHeader()
+            {
+                Console.Clear();
+                if (LoggedInUser != null)
+                    Console.WriteLine($"Inloggad som: {LoggedInUser.Username}");
+                else
+                    Console.WriteLine("Ej inloggad");
+
+                Console.WriteLine("--------------------------");
+            }
 
             //Skapar admin loggin, endast om det inte finns 
             //using (var db = new WebshopContext())
@@ -94,7 +111,7 @@ namespace WebshopConsole
             //    }
             //}
 
-            //Login för användare
+        
 
 
 
