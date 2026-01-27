@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using System.Net.WebSockets;
@@ -44,45 +45,50 @@ namespace WebshopConsole
                 Console.Clear();
 
                 using var db = new WebshopContext();
-
-                var products = db.Products
-                    .Include(p => p.Category)
-                    .Take(3)
-                    .ToList();
+            var products = db.Products;
+            var campaignProducts = db.Products
+                .Where(p => p.IsOnSale)
+                .Take(3)
+                .ToList();
+                
+                    
 
                 // Header
                 DrawBox(10, 0, 30, 5, "  Jakobs Klädwebshop  ");
 
                 // Produktbox
-                DrawBox(0, 5, 90, 12, "  Produkter  ");
+                DrawBox(0, 5, 70, 6, "  Produkter  ");
 
-                int colWidth = 28;
-                int startX = 2;
+                int colWidth = 20;
+                int startX = 5;
                 int startY = 7;
 
-                for (int i = 0; i < products.Count; i++)
-                {
-                    var p = products[i];
-                    int x = startX + (i * colWidth);
+            int col = 2;
 
-                    Console.SetCursorPosition(x, startY);
-                    Console.Write(p.Name);
+            foreach (var p in campaignProducts)
+            {
+                Console.SetCursorPosition(col, 6);
+                Console.Write(p.Name);
 
-                    Console.SetCursorPosition(x, startY + 1);
-                    Console.Write($"Kategori: {p.Category.Name}");
+                Console.SetCursorPosition(col, 7);
+                Console.Write($"Färg: {p.Color}");
 
-                    Console.SetCursorPosition(x, startY + 2);
-                    Console.Write($"Färg: {p.Color}");
+                Console.SetCursorPosition(col, 8);
+                Console.Write($"Strl: {p.Size}");
 
-                    Console.SetCursorPosition(x, startY + 3);
-                    Console.Write($"Storlek: {p.Size}");
+                Console.SetCursorPosition(col, 9);
+                Console.ForegroundColor = ConsoleColor.Red;
 
-                    Console.SetCursorPosition(x, startY + 4);
-                    Console.Write($"Pris: {p.Price} kr");
-                }
+                Console.Write($"{p.SalePrice} kr");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.Write($" ~{p.Price}~");
+                Console.ResetColor();
 
-                // Meny
-                DrawBox(0, 17, 90, 9);
+                col += 20;
+            }
+
+            // Meny
+            DrawBox(0, 17, 90, 9);
 
                 Console.SetCursorPosition(2, 18);
                 Console.Write("Välkommen!");
@@ -272,7 +278,15 @@ namespace WebshopConsole
                             string size = Console.ReadLine();
                             Console.Write("Lagersaldo: ");
                             int stock = int.Parse(Console.ReadLine());
+                            Console.WriteLine("Är produkten på kampanj? (j/n): ");
+                            bool isOnSale = Console.ReadLine().ToLower() == "j";
 
+                            decimal? salePrice = null;
+                            if (isOnSale)
+                            {
+                                Console.Write("Reapris: ");
+                                salePrice = decimal.Parse(Console.ReadLine());
+                            }
 
 
                             var category = db.Categories
@@ -295,7 +309,9 @@ namespace WebshopConsole
                                 Price = price,
                                 Color = color,
                                 Size = size,
-                                Stock = stock
+                                Stock = stock,
+                                SalePrice = salePrice,
+                                IsOnSale = isOnSale
                             });
                             db.SaveChanges();
                             Console.WriteLine("Produkten tillagd!");
