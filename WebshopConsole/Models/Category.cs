@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using WebshopConsole.Models;
+using WebshopConsole.Services;
 
 namespace WebshopConsole.Models
 {

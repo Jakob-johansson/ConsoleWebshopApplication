@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Net.WebSockets;
 using System.Security.Cryptography;
 using WebshopConsole.Models;
+using WebshopConsole.Services;
 
 namespace WebshopConsole
 {
@@ -14,32 +15,7 @@ namespace WebshopConsole
 
          bool AdminOnline = false;
 
-        static void DrawBox(int left, int top, int width, int height, string title = "")
-        {
-            // Top
-            Console.SetCursorPosition(left, top);
-            Console.Write("┌" + new string('─', width - 2) + "┐");
-
-            // Title
-            if (!string.IsNullOrEmpty(title))
-            {
-                Console.SetCursorPosition(left + 2, top);
-                Console.Write(title);
-            }
-
-            // Sides
-            for (int i = 1; i < height - 1; i++)
-            {
-                Console.SetCursorPosition(left, top + i);
-                Console.Write("│");
-                Console.SetCursorPosition(left + width - 1, top + i);
-                Console.Write("│");
-            }
-
-            // Bottom
-            Console.SetCursorPosition(left, top + height - 1);
-            Console.Write("└" + new string('─', width - 2) + "┘");
-        }
+     
             static string ShowStartPage()
             {
                 Console.Clear();
@@ -54,10 +30,10 @@ namespace WebshopConsole
                     
 
                 // Header
-                DrawBox(10, 0, 30, 5, "  Jakobs Klädwebshop  ");
+                DrawService.DrawBox(10, 0, 30, 5, "  Jakobs Klädwebshop  ");
 
-                // Produktbox
-                DrawBox(0, 5, 70, 6, "  Produkter  ");
+            // Produktbox
+            DrawService.DrawBox(0, 5, 70, 6, "  Produkter  ");
 
                 int colWidth = 20;
                 int startX = 5;
@@ -88,7 +64,7 @@ namespace WebshopConsole
             }
 
             // Meny
-            DrawBox(0, 17, 90, 9);
+            DrawService.DrawBox(0, 17, 90, 9);
 
                 Console.SetCursorPosition(2, 18);
                 Console.Write("Välkommen!");
@@ -97,7 +73,7 @@ namespace WebshopConsole
                 Console.Write("Välj ett alternativ nedan:");
 
                 Console.SetCursorPosition(2, 21);
-                Console.Write("1. Se alla produkter");
+                Console.Write("1. Gå till webshoppen");
 
                 Console.SetCursorPosition(2, 22);
                 Console.Write("2. Logga in");
@@ -117,12 +93,12 @@ namespace WebshopConsole
         
         static void ShowShopLayout()
         {
-           
-
-                DrawBox(0, 0, 30, 5, "# Fina butiken #");
 
 
-                DrawBox(0, 6, 30, 7, "Erbjudande 1");
+            DrawService.DrawBox(0, 0, 30, 5, "# Fina butiken #");
+
+
+            DrawService.DrawBox(0, 6, 30, 7, "Erbjudande 1");
                 Console.SetCursorPosition(2, 7);
                 Console.Write("Tröja");
 
@@ -135,100 +111,8 @@ namespace WebshopConsole
                 Console.ReadLine();
 
         }
-        static void UserLoginMenu()
-        {
-            Console.Clear();
-            using var db = new WebshopContext();
-            Console.Write("Användarnamn: ");
-            var username = Console.ReadLine();
-
-            Console.Write("Lösenord: ");
-            var password = Console.ReadLine();
-            var user = db.Users.FirstOrDefault(u =>
-                u.Username == username && u.Password == password);
-
-            if (user == null)
-            {
-                Console.WriteLine("Fel inlogg");
-                
-            }
-
-            if (user.IsAdmin)
-            {
-                LoggedInUser = user;
-                Console.WriteLine("Admin inloggad");
-                Console.ReadLine();
-                ShowAdminMenu();
-            }
-            else
-            {
-                LoggedInUser = user;
-                Console.WriteLine("Kund inloggad");
-                Console.ReadLine();
-            }
-            
-        }
-        static void UserRegisterMenu()
-        {
-            while (true)
-            {
-                Console.Write("Användarnamn: ");
-                string username = Console.ReadLine();
-                Console.Write("Lösenord: ");
-                string password = Console.ReadLine();
-
-                Console.WriteLine("Förnamn: ");
-                string firstname = Console.ReadLine();
-                Console.WriteLine("Efternamn: ");
-                string lastname = Console.ReadLine();
-                Console.WriteLine("Adress: ");
-                string adress = Console.ReadLine();
-                Console.WriteLine("Stad: ");
-                string city = Console.ReadLine();
-                Console.WriteLine("Land: ");
-                string country = Console.ReadLine();
-                Console.WriteLine("Telefonnummer: ");
-                int phonenumber = Convert.ToInt32(Console.ReadLine());
-                Console.WriteLine("Ålder: ");
-                int age = Convert.ToInt32(Console.ReadLine());
-
-
-                using var db = new WebshopContext();
-                if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-                {
-                    Console.WriteLine("Användarnamn och lösenord får inte vara tomma.");
-                    continue;
-                }
-
-                if (db.Users.Any(u => u.Username == username))
-                {
-                    Console.WriteLine("Användarnamnet finns redan. F" +
-                        "örsök igen.");
-                    continue;
-                }
-
-                var user = new User
-                {
-                    Username = username,
-                    Password = password,
-                    IsAdmin = false,
-                    Customer = new Customer
-                    {
-                        FirstName = firstname,
-                        LastName = lastname,
-                        Address = adress,
-                        City = city,
-                        Country = country,
-                        PhoneNumber = phonenumber,
-                        Age = age
-                    }
-                };
-                db.Users.Add(user);
-                db.SaveChanges();
-                Console.WriteLine("Registrering lyckades!");
-                break;
-            }
-        }
+        
+        
         
         static void ShowAdminMenu()
         {
@@ -344,18 +228,12 @@ namespace WebshopConsole
 
             }
         }
-        static List<Product> GetProducts()
-        {
-            using var db = new WebshopContext();
-
-            return db.Products
-                .Include(p => p.Category)
-                .ToList();
-        }
+        
+        
         static void Main(string[] args)
         {
             //Startmeny
-       
+            
             bool running = true;
             while (running)
             {
@@ -364,13 +242,13 @@ namespace WebshopConsole
                 switch (choice)
                 {
                     case "1":
-                        UserLoginMenu();
+                        ShopService.ShowCategoryOverview();
                         break;
                     case "2":
-                        UserRegisterMenu();
+                        LoginService.UserLoginMenu();
                         break;
                     case "3":
-
+                        RegisterService.UserRegisterMenu();
                         break;
                     case "0":
                         break;

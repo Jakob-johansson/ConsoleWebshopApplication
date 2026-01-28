@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using static System.Net.WebRequestMethods;
+using WebshopConsole.Models;
+using WebshopConsole.Services;
 
 namespace WebshopConsole.Models
 {
