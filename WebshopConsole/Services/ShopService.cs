@@ -12,24 +12,7 @@ namespace WebshopConsole.Services
 {
     internal class ShopService
     {
-        //Listar alla produkter i en lista från 1. till max
-        //public static List<Product> GetProducts()
-        //{
-        //    using var db = new WebshopContext();
-        //    var products = db.Products.ToList();
-        //    Console.Clear();
-
-        //    Console.WriteLine("Produkter: ");
-        //    for(int i = 0; i < products.Count; i++)
-        //    {
-        //        Console.WriteLine($"{i + 1}.{products[i].Name}");
-        //    }
-        //    Console.ReadLine();
-        //    return db.Products
-        //        .Include(p => p.Category)
-        //        .ToList();
-        //}
-
+        
 
         public static async Task ShowShop()
         {
@@ -274,5 +257,5 @@ namespace WebshopConsole.Services
             Console.ReadKey();
         }
     }
-        }
+}
        

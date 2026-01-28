@@ -10,7 +10,7 @@ namespace WebshopConsole.Services
     public class LoginService
     {
         public static bool IsLoggedIn = false;
-        static User LoggedInUser = null;
+        public static User LoggedInUser = null;
         public static void UserLoginMenu()
         {
             if (IsLoggedIn == true)

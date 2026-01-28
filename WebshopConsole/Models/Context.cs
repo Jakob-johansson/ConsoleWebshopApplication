@@ -11,6 +11,8 @@ namespace WebshopConsole.Models
 {
     public class WebshopContext : DbContext
     {
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<cartItem> CartItems { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
@@ -28,6 +30,18 @@ namespace WebshopConsole.Models
             modelBuilder.Entity<Product>()
                 .Property(p => p.Price)
                 .HasPrecision(10, 2);
+            modelBuilder.Entity<Cart>()
+                .HasOne(c => c.Customer)
+                .WithOne()
+                .HasForeignKey<Cart>(c => c.CustomerId);
+            modelBuilder.Entity<cartItem>()
+                .HasOne(ci => ci.Product)
+                .WithMany()
+                .HasForeignKey(ci => ci.ProductId);
+            modelBuilder.Entity<cartItem>()
+                .HasOne(ci => ci.Cart)
+                .WithMany(c => c.Items)
+                .HasForeignKey(ci => ci.CartId);
         }
     }
 }
