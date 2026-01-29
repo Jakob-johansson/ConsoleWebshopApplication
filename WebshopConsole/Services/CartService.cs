@@ -62,39 +62,111 @@ namespace WebshopConsole.Services
             }
             return cart;
         }
+        public static void RemoveOneFromCart(int productId)
+        {
+            using var db = new WebshopContext();
+            var customer = CustomerService.GetLoggedInCustomer(db);
+
+            var cart = db.Carts
+                .Include(c => c.Items)
+                .FirstOrDefault(c => c.CustomerId == customer.Id);
+
+            if (cart == null)
+                return;
+
+            var item = cart.Items
+                .FirstOrDefault(i => i.ProductId == productId);
+
+            if (item == null)
+                return;
+
+            item.Quantity--;
+
+            if (item.Quantity <= 0)
+            {
+                db.CartItems.Remove(item);
+            }
+
+            db.SaveChanges();
+        }
+        //Visar kundens kundvagn
         public static void ShowCart()
         {
             using var db = new WebshopContext();
+            var customer = CustomerService.GetLoggedInCustomer(db);
+
             var cart = db.Carts
                 .Include(c => c.Items)
                 .ThenInclude(i => i.Product)
-                .FirstOrDefault(c => c.CustomerId == LoginService.LoggedInUser.Id);
+                .FirstOrDefault(c => c.CustomerId == customer.Id);
+
             Console.Clear();
 
-            if(cart == null || !cart.Items.Any())
+            if (cart == null || !cart.Items.Any())
             {
-                Console.WriteLine("Din Kundvagn är tom");
+                Console.WriteLine("Din kundvagn är tom");
                 Console.ReadKey();
                 return;
             }
 
             decimal total = 0;
 
-            foreach(var item in cart.Items)
+            foreach (var item in cart.Items)
             {
                 decimal price = item.Product.IsOnSale && item.Product.SalePrice.HasValue
                     ? item.Product.SalePrice.Value
                     : item.Product.Price;
+
                 decimal sum = price * item.Quantity;
                 total += sum;
-                Console.WriteLine($"{item.Product.Name} x{item.Quantity} = {sum} kr");
 
+                Console.WriteLine(
+                    $"ID: {item.Product.Id} | {item.Product.Name} x{item.Quantity} = {sum} kr"
+                );
             }
+
             Console.WriteLine("-----------------------");
             Console.WriteLine($"Totalt: {total} kr");
-            Console.ReadKey();
+            Console.WriteLine();
+            Console.WriteLine("Ange ProduktID för att ändra antal: ");
+            //Köp
+            Console.WriteLine("\n 1. Slutför köp \n 0. tillbaka");
+            var buyChoice = Console.ReadLine();
+
+            if (buyChoice == "1")
+            {
+                CheckoutService.Checkout();
+            }
+            if (!int.TryParse(Console.ReadLine(), out int productId) || productId == 0)
+                return;
+
+            var selectedItem = cart.Items
+                .FirstOrDefault(i => i.Product.Id == productId);
+
+            if (selectedItem == null)
+            {
+                Console.WriteLine("Produkten finns inte i kundkorgen.");
+                Console.ReadKey();
+                return;
+            }
+
+            Console.WriteLine("1. Lägg till 1 st");
+            Console.WriteLine("2. Ta bort 1 st");
+
+            var choice = Console.ReadLine();
+
+            if (choice == "1")
+                AddToCart(selectedItem.Product);
+            else if (choice == "2")
+                RemoveOneFromCart(productId);
+
+           
+            
+
+
         }
 
-       
+
+
     }
 }

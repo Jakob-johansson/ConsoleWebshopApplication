@@ -20,11 +20,7 @@ namespace WebshopConsole.Services
 
             while (inShop)
             {
-                Console.Clear();
-                Console.WriteLine("=========== Shoppen ===========");
-                Console.WriteLine("1. Visa kategorier");
-                Console.WriteLine("2. Sök produkt");
-                Console.WriteLine("3. Tillbaka");
+               
 
                 var choice = Console.ReadLine();
 
@@ -262,6 +258,7 @@ namespace WebshopConsole.Services
                 Console.WriteLine($"I lager: {product.Stock}");
 
                 Console.WriteLine();
+                
                 if (LoginService.IsLoggedIn == false)
                 {
                     Console.WriteLine("1. Logga in eller registrera dig för att lägga till produkten i kundvagnen");
