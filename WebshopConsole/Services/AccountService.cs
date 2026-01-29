@@ -33,12 +33,17 @@ namespace WebshopConsole.Services
             Console.SetCursorPosition(startX, startY + boxHeight + 2);
             Console.WriteLine("Välj ett alternativ:");
             Console.WriteLine("1. Uppdatera uppgifter");
-            Console.WriteLine("2. Tillbaka");
+            Console.WriteLine("2. Mina ordrar");
+            Console.WriteLine("3. Tillbaka");
 
             var choice = Console.ReadLine();
 
             if (choice == "1")
                 ShowUpdateAccount(customer, db);
+            else if(choice == "2")
+            {
+                OrderService.ShowMyOrders();
+            }
         }
 
         private static void WriteField(int x, int y, string label, string value)

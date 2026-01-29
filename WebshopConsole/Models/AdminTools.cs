@@ -121,6 +121,7 @@ namespace WebshopConsole.Models
 
                         break;
                     case '3':
+                    OrderService.ShowAllOrders();
                         break;
                     case '4':
                         break;

@@ -17,6 +17,8 @@ namespace WebshopConsole.Models
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             options.UseSqlServer("Server = tcp:jakobsdb.database.windows.net, 1433; Initial Catalog = JakobsDb; Persist Security Info = False; User ID = dbadmin; Password = Jakob1234; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30; ");

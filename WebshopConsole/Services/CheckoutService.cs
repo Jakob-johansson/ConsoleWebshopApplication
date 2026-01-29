@@ -167,10 +167,33 @@ namespace WebshopConsole.Services
 
             //slutför köp
 
+            var order = new Order
+            {
+                CustomerId = customer.Id,
+                OrderDate = DateTime.Now,
+                Status = "Pågående",
+                TotalPrice = total
+            };
+
             foreach (var item in cart.Items)
             {
+                decimal price = item.Product.IsOnSale && item.Product.SalePrice.HasValue
+                    ? item.Product.SalePrice.Value
+                    : item.Product.Price;
+
+                order.Items.Add(new OrderItem
+                {
+                    ProductId = item.Product.Id,
+                    Quantity = item.Quantity,
+                    PriceAtPurchase = price
+                });
+
                 item.Product.Stock -= item.Quantity;
             }
+
+            db.Orders.Add(order);
+            db.CartItems.RemoveRange(cart.Items);
+            db.SaveChanges();
 
             db.CartItems.RemoveRange(cart.Items);
             db.SaveChanges();
