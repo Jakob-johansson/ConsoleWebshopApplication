@@ -11,9 +11,10 @@ namespace WebshopConsole.Services
     {
         public static bool IsLoggedIn = false;
         public static User LoggedInUser = null;
+        public static bool AdminOnline = false;
         public static void UserLoginMenu()
         {
-            if (IsLoggedIn == true)
+            if (IsLoggedIn == true )
             {
                 Console.WriteLine("Du är redan inloggad!");
                 Console.Read();
@@ -43,6 +44,7 @@ namespace WebshopConsole.Services
                     LoggedInUser = user;
                     Console.WriteLine("Admin inloggad");
                     Console.ReadLine();
+                    AdminOnline = true;
                     //ShowAdminMenu();
                 }
                 else

@@ -29,13 +29,14 @@ namespace WebshopConsole.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[CustomerId] IS NOT NULL");
 
                     b.ToTable("Carts");
                 });
@@ -93,7 +94,13 @@ namespace WebshopConsole.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("int");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Customers");
                 });
@@ -148,9 +155,6 @@ namespace WebshopConsole.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsAdmin")
                         .HasColumnType("bit");
 
@@ -164,8 +168,6 @@ namespace WebshopConsole.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
 
                     b.HasIndex("Username")
                         .IsUnique();
@@ -181,20 +183,20 @@ namespace WebshopConsole.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("cartId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("CartId");
 
-                    b.HasIndex("cartId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("CartItems");
                 });
@@ -203,11 +205,20 @@ namespace WebshopConsole.Migrations
                 {
                     b.HasOne("WebshopConsole.Models.Customer", "Customer")
                         .WithOne()
-                        .HasForeignKey("WebshopConsole.Models.Cart", "CustomerId")
+                        .HasForeignKey("WebshopConsole.Models.Cart", "CustomerId");
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("WebshopConsole.Models.Customer", b =>
+                {
+                    b.HasOne("WebshopConsole.Models.User", "User")
+                        .WithOne("Customer")
+                        .HasForeignKey("WebshopConsole.Models.Customer", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WebshopConsole.Models.Product", b =>
@@ -221,26 +232,17 @@ namespace WebshopConsole.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("WebshopConsole.Models.User", b =>
-                {
-                    b.HasOne("WebshopConsole.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId");
-
-                    b.Navigation("Customer");
-                });
-
             modelBuilder.Entity("WebshopConsole.Models.cartItem", b =>
                 {
-                    b.HasOne("WebshopConsole.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
+                    b.HasOne("WebshopConsole.Models.Cart", "Cart")
+                        .WithMany("Items")
+                        .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebshopConsole.Models.Cart", "Cart")
-                        .WithMany("Items")
-                        .HasForeignKey("cartId")
+                    b.HasOne("WebshopConsole.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -257,6 +259,11 @@ namespace WebshopConsole.Migrations
             modelBuilder.Entity("WebshopConsole.Models.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("WebshopConsole.Models.User", b =>
+                {
+                    b.Navigation("Customer");
                 });
 #pragma warning restore 612, 618
         }

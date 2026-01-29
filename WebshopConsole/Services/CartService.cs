@@ -20,8 +20,9 @@ namespace WebshopConsole.Services
         {
            
             using var db = new WebshopContext();
-
-            var cart = GetOrCreateCart(db, LoginService.LoggedInUser.Id);
+            var customer = CustomerService.GetLoggedInCustomer(db);
+            
+            var cart = GetOrCreateCart(db, customer.Id);
 
             var existingItem = cart.Items
                 .FirstOrDefault(i => i.ProductId == product.Id);

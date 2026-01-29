@@ -44,6 +44,7 @@ namespace WebshopConsole.Services
                 }
             }
         }
+
         public static void SearchProductAsync()
         {
             Console.Clear();
@@ -60,56 +61,105 @@ namespace WebshopConsole.Services
                 var results = db.Products
                     .Include(p => p.Category)
                     .Where(p =>
-                    p.Name.ToLower().Contains(search) ||
-                    p.Category.Name.ToLower().Contains(search));
-                    
+                        p.Name.ToLower().Contains(search) ||
+                        p.Category.Name.ToLower().Contains(search))
+                    .ToList(); // hämta alla matcher
                 stopwatch.Stop();
 
-                Console.WriteLine($"Sökningen tog {stopwatch.Elapsed.TotalSeconds} sekunder\n");
+                Console.WriteLine($"Sökningen tog {stopwatch.Elapsed.TotalSeconds:F2} sekunder\n");
+
                 if (!results.Any())
                 {
                     Console.WriteLine("Inga produkter hittades.");
                     Console.ReadKey();
                     return;
                 }
-                foreach (var p in results)
+
+                int boxWidth = 40;
+                int boxHeight = 6;
+                int startX = 2;
+                int startY = 2;
+                int spacingX = 2;
+                int spacingY = 1;
+
+                int maxColumns = (Console.WindowWidth - 2) / (boxWidth + spacingX);
+                if (maxColumns < 1) maxColumns = 1;
+
+                int availableHeight = Console.WindowHeight - 5;
+                int maxRows = availableHeight / (boxHeight + spacingY);
+                if (maxRows < 1) maxRows = 1;
+
+                int boxesPerPage = maxColumns * maxRows;
+                int totalPages = (int)Math.Ceiling((double)results.Count / boxesPerPage);
+
+                for (int page = 0; page < totalPages; page++)
                 {
-                    Console.WriteLine($"{p.Name} ({p.Category.Name}) Produkt ID: {p.Id}.");
+                    Console.Clear();
+                    Console.WriteLine($"Resultat sida {page + 1}/{totalPages}");
 
-                    if (p.IsOnSale && p.SalePrice.HasValue)
+                    var pageItems = results.Skip(page * boxesPerPage).Take(boxesPerPage).ToList();
+
+                    for (int i = 0; i < pageItems.Count; i++)
                     {
+                        var p = pageItems[i];
 
-                        Console.ForegroundColor = ConsoleColor.DarkGray;
-                        Console.Write($"~~{p.Price} kr~~ ");
+                        int col = i % maxColumns;
+                        int row = i / maxColumns;
 
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"{p.SalePrice} kr");
+                        int posX = startX + col * (boxWidth + spacingX);
+                        int posY = startY + row * (boxHeight + spacingY);
 
-                        Console.ResetColor();
+                        if (posY + boxHeight >= Console.WindowHeight) continue; // säkerhet
+
+                        // Rita box med productId i rubriken
+                        DrawService.DrawBox(posX, posY, boxWidth, boxHeight, $"{p.Name} ({p.Category.Name}) [ID: {p.Id}]");
+
+                        // Produktinfo i boxen
+                        Console.SetCursorPosition(posX + 1, posY + 1);
+
+                        // Pris
+                        if (p.IsOnSale && p.SalePrice.HasValue)
+                        {
+                            Console.Write("Pris: ");
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.Write($"{p.SalePrice.Value} kr");
+                            Console.ResetColor();
+                            Console.Write($" (Ord {p.Price} kr)");
+                        }
+                        else
+                        {
+                            Console.Write($"Pris: {p.Price} kr");
+                        }
+
+                        Console.SetCursorPosition(posX + 1, posY + 2);
+                        Console.Write($"Färg: {p.Color}");
+                        Console.SetCursorPosition(posX + 1, posY + 3);
+                        Console.Write($"Storlek: {p.Size}");
+                        Console.SetCursorPosition(posX + 1, posY + 4);
+                        Console.Write($"I lager: {p.Stock}");
                     }
-                    else
+
+                    Console.SetCursorPosition(0, startY + maxRows * (boxHeight + spacingY) + 1);
+                    Console.WriteLine("Ange Produkt ID för detaljer eller tryck Enter för nästa sida:");
+                    var input = Console.ReadLine();
+
+                    if (!string.IsNullOrWhiteSpace(input) && int.TryParse(input, out int productId))
                     {
-                        Console.WriteLine($"{p.Price} kr");
+                        ShowProductDetails(productId);
+                        break; // Gå ut ur sidan efter att ha valt produkt
                     }
-
-                    Console.WriteLine("----------------------");
                 }
-
-                Console.WriteLine("För mer info ange produkt ID: ");
-
-                int productId = int.Parse(Console.ReadLine());
-
-                ShowProductDetails(productId);
-
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Fel: {ex.Message}");
                 Console.ResetColor();
-               
+                Console.ReadKey();
             }
         }
+
+
 
 
         //Tar fram en snygg layout som visar 3 kategorier och 2 produkter från varje kategori, 
@@ -243,10 +293,15 @@ namespace WebshopConsole.Services
 
                     var choice = Console.ReadLine();
 
-                    if (choice == "1")
+                    switch (choice)
                     {
-                        CartService.AddToCart(product);
+                        case "1":
+                            CartService.AddToCart(product);
+                            Console.WriteLine($"1st {product.Name} lades till i kundvagnen");
+                            break;
                     }
+                        
+                    
                 }
             }
             catch (Exception ex)

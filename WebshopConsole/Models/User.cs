@@ -20,9 +20,6 @@ namespace WebshopConsole.Models
 
         public bool IsAdmin { get; set; }
 
-
-        //Dessa två är för att koppla ihop Users med Customer, men samtidigt göra så admin inte behöver vara customer tex, därav "?".
-        public int? CustomerId { get; set; }   // nullable
         public Customer? Customer { get; set; }
     }
 
