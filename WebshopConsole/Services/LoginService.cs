@@ -45,7 +45,7 @@ namespace WebshopConsole.Services
                     Console.WriteLine("Admin inloggad");
                     Console.ReadLine();
                     AdminOnline = true;
-                    //ShowAdminMenu();
+                  
                 }
                 else
                 {

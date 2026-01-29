@@ -39,7 +39,7 @@ namespace WebshopConsole.Services
                         break;
 
                     case "3":
-                        inShop = false; // ← VIKTIG
+                        inShop = false; 
                         break;
                 }
             }
@@ -63,7 +63,7 @@ namespace WebshopConsole.Services
                     .Where(p =>
                         p.Name.ToLower().Contains(search) ||
                         p.Category.Name.ToLower().Contains(search))
-                    .ToList(); // hämta alla matcher
+                    .ToList(); 
                 stopwatch.Stop();
 
                 Console.WriteLine($"Sökningen tog {stopwatch.Elapsed.TotalSeconds:F2} sekunder\n");
@@ -109,15 +109,14 @@ namespace WebshopConsole.Services
                         int posX = startX + col * (boxWidth + spacingX);
                         int posY = startY + row * (boxHeight + spacingY);
 
-                        if (posY + boxHeight >= Console.WindowHeight) continue; // säkerhet
+                        if (posY + boxHeight >= Console.WindowHeight) continue; 
 
-                        // Rita box med productId i rubriken
                         DrawService.DrawBox(posX, posY, boxWidth, boxHeight, $"{p.Name} ({p.Category.Name}) [ID: {p.Id}]");
 
-                        // Produktinfo i boxen
+                      
                         Console.SetCursorPosition(posX + 1, posY + 1);
 
-                        // Pris
+                       
                         if (p.IsOnSale && p.SalePrice.HasValue)
                         {
                             Console.Write("Pris: ");
@@ -146,7 +145,7 @@ namespace WebshopConsole.Services
                     if (!string.IsNullOrWhiteSpace(input) && int.TryParse(input, out int productId))
                     {
                         ShowProductDetails(productId);
-                        break; // Gå ut ur sidan efter att ha valt produkt
+                        break; 
                     }
                 }
             }
@@ -162,13 +161,13 @@ namespace WebshopConsole.Services
 
 
 
-        //Tar fram en snygg layout som visar 3 kategorier och 2 produkter från varje kategori, 
+        
         public static async Task ShowCategoryOverview()
         {
             Console.Clear();
             using var db = new WebshopContext();
 
-            //Hämtar produkter och kategorin.
+           
             var products = db.Products
                 .Include(p => p.Category)
                 .ToList();
@@ -191,7 +190,7 @@ namespace WebshopConsole.Services
 
                 int startX = i * (boxWidth + 2);
 
-                //Drawbox
+             
                 DrawService.DrawBox(startX, startY, boxWidth, boxHeight, $" {categoryName.ToUpper()} ");
 
                 int contentY = startY + 2;

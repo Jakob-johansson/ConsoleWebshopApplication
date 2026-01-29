@@ -9,18 +9,18 @@ namespace WebshopConsole.Services
     {
         public static void DrawBox(int left, int top, int width, int height, string title = "")
         {
-            // Top
+            //Top
             Console.SetCursorPosition(left, top);
             Console.Write("┌" + new string('─', width - 2) + "┐");
 
-            // Title
+            //Title
             if (!string.IsNullOrEmpty(title))
             {
                 Console.SetCursorPosition(left + 2, top);
                 Console.Write(title);
             }
 
-            // Sides
+            //Sides
             for (int i = 1; i < height - 1; i++)
             {
                 Console.SetCursorPosition(left, top + i);
@@ -29,7 +29,7 @@ namespace WebshopConsole.Services
                 Console.Write("│");
             }
 
-            // Bottom
+            //Bottom
             Console.SetCursorPosition(left, top + height - 1);
             Console.Write("└" + new string('─', width - 2) + "┘");
         }

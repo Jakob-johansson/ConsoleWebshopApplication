@@ -87,37 +87,6 @@ namespace WebshopConsole
                 }
                 
             }
-            
-
-            //void ShowHeader()
-            //{
-            //    Console.Clear();
-            //    if (LoggedInUser != null)
-            //        Console.WriteLine($"Inloggad som: {LoggedInUser.Username}");
-            //    else
-            //        Console.WriteLine("Ej inloggad");
-
-            //    Console.WriteLine("--------------------------");
-            //}
-            //if (LoggedInUser != null && LoggedInUser.IsAdmin)
-            //{
-            //    ShowAdminMenu();
-                
-            //}
-            //else
-            //{
-               
-            //}
-
-
-
-            //Skapar admin loggin, endast om det inte finns
-
-           
-
-
-
-
         }
     }
 }

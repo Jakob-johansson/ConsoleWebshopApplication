@@ -48,7 +48,7 @@ namespace WebshopConsole.Models
                         var key1 = Console.ReadKey();
                         switch (key1.KeyChar)
                         {
-                            case '1': //Lägger till en produkt i databasen.
+                            case '1': 
                                 Console.Write("Produktnamn: ");
                                 string name = Console.ReadLine();
                                 Console.Write("Kategori: ");

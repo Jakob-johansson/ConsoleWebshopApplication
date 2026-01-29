@@ -22,10 +22,10 @@ namespace WebshopConsole.Services
 
 
 
-                // Header
+                
                 DrawService.DrawBox(10, 0, 30, 5, "  Jakobs Klädwebshop  ");
 
-                // Produktbox
+               
                 DrawService.DrawBox(0, 5, 70, 6, "  Produkter  ");
 
                 int colWidth = 20;
@@ -56,7 +56,7 @@ namespace WebshopConsole.Services
                     col += 20;
                 }
 
-                // Meny
+               
                 DrawService.DrawBox(0, 17, 90, 9);
 
                 Console.SetCursorPosition(2, 18);

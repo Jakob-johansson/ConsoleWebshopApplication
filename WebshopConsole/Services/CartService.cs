@@ -95,6 +95,6 @@ namespace WebshopConsole.Services
             Console.ReadKey();
         }
 
-       // public static void ClearCart() => Cart.Clear();
+       
     }
 }

@@ -23,11 +23,11 @@ namespace WebshopConsole.Models
         public int Stock { get; set; }
 
         
-        public int CategoryId { get; set; }          // FK
+        public int CategoryId { get; set; }         
         public Category Category { get; set; } = null!;
 
         public bool IsOnSale { get; set; }
-        //Denna är nullable eftersom den inte behöver vara på rea.
+        
         public decimal? SalePrice { get; set; }
 
     }
