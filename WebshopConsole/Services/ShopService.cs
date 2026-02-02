@@ -62,7 +62,7 @@ namespace WebshopConsole.Services
                     .ToList(); 
                 stopwatch.Stop();
 
-                Console.WriteLine($"Sökningen tog {stopwatch.Elapsed.TotalSeconds:F2} sekunder\n");
+               
 
                 if (!results.Any())
                 {
@@ -91,6 +91,7 @@ namespace WebshopConsole.Services
                 for (int page = 0; page < totalPages; page++)
                 {
                     Console.Clear();
+                    Console.WriteLine($"Sökningen tog {stopwatch.Elapsed.TotalSeconds:F2} sekunder\n");
                     Console.WriteLine($"Resultat sida {page + 1}/{totalPages}");
 
                     var pageItems = results.Skip(page * boxesPerPage).Take(boxesPerPage).ToList();
@@ -239,7 +240,7 @@ namespace WebshopConsole.Services
             
         }
 
-        static void ShowProductDetails(int productId)
+       public static void ShowProductDetails(int productId)
         {
             try
             {

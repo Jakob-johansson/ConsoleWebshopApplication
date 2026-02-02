@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -68,19 +69,36 @@ namespace WebshopConsole.Services
             if (!int.TryParse(Console.ReadLine(), out int orderId) || orderId == 0)
                 return;
 
-            var orderToCancel = db.Orders.FirstOrDefault(o => o.Id == orderId);
-            if (orderToCancel == null)
+            var orderToCancel = db.Orders
+                 .Include(o => o.Items)
+                 .ThenInclude(i => i.Product)
+                 .FirstOrDefault(o => o.Id == orderId);
+
+            if(orderToCancel == null)
             {
-                Console.WriteLine("Order hittades inte.");
+                Console.WriteLine("Ordern med det ID:et hittades inte. ");
+                Console.ReadKey();
+                return;
+
+            }
+            if(orderToCancel.Status == "Avbruten")
+            {
+                Console.WriteLine("Ordern är redan avbruten. ");
                 Console.ReadKey();
                 return;
             }
-
+            foreach(var item in orderToCancel.Items)
+            {
+                item.Product.Stock += item.Quantity;
+            }
             orderToCancel.Status = "Avbruten";
             db.SaveChanges();
 
-            Console.WriteLine("Ordern är nu avbruten.");
+            Console.WriteLine("Orden har avbrutits och produkterna är tillbaka i lager. ");
             Console.ReadKey();
+
+
+
         }
     }
 }

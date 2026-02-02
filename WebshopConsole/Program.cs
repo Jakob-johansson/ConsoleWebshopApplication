@@ -50,37 +50,45 @@ namespace WebshopConsole
                 {
                     switch (choice)
                     {
-                        case "1":
+                        case "a":
                             ShopService.ShowCategoryOverview();
                             break;
-                        case "2":
+                        case "b":
                                 LoginService.UserLoginMenu();
                             break;
-                        case "3":
+                        case "c":
                                 RegisterService.UserRegisterMenu();
                             break;
                         case "0":
-                            
                             break;
+                      
                     }
+                    
+
+
                 }
                 else
                 {
                     switch (choice)
                     {
-                        case "1":
+                        case "a":
                             ShopService.ShowCategoryOverview();
                             break;
-                        case "2":
+                        case "b":
                             CartService.ShowCart();
                             break;
-                        case "3":
+                        case "c":
                             AccountService.ShowAccount();
                             break;
-                        case "0":
+                        case "d":
                             if (LoginService.AdminOnline)
                             {
                                 AdminTools.ShowAdminMenu();
+                            }
+                            else if(LoginService.IsLoggedIn)
+                            {
+                                LoginService.IsLoggedIn = false;
+                                LoginService.LoggedInUser = null;
                             }
                             break;
                     }
